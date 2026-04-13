@@ -17,17 +17,42 @@ Replace this paragraph with your own summary of what your version does.
 
 ## How The System Works
 
-Explain your design in plain language.
+Real-world recommender systems usually combine many signals (what you clicked, skipped, finished, liked, and searched) to predict what you are most likely to enjoy next, then rank the best candidates into a top list. In this simulation, I am focusing on transparent content-based matching: each song is scored against a user's taste profile, and the highest-scoring songs become the recommendations.
 
-Some prompts to answer:
+Features used by `Song`:
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
+- `id`
+- `title`
+- `artist`
+- `genre`
+- `mood`
+- `energy`
+- `tempo_bpm`
+- `valence`
+- `danceability`
+- `acousticness`
 
-You can include a simple diagram or bullet list if helpful.
+Features used by `UserProfile`:
+
+- `favorite_genre`
+- `favorite_mood`
+- `target_energy`
+- `likes_acoustic`
+
+### Algorithm Recipe
+
+1. Read the user's preferences and turn them into target values for genre, mood, and energy.
+2. Loop through every song in `data/songs.csv`.
+3. Compare each song to the user profile and give partial scores for each feature match.
+4. Combine the partial scores with weights to get one final score per song.
+5. Sort the songs from highest score to lowest score.
+6. Return the top `K` songs as the final recommendation list.
+
+The scoring logic treats mood and energy as strong signals, genre as another important signal, and the remaining audio features as refinements that help break ties or improve the ranking.
+
+### Expected Biases and Limitations
+
+This system might over-prioritize genre, ignoring great songs that better match the user's mood or energy. It may also under-represent songs that are outside the dominant patterns in the small CSV file, since the recommender can only choose from the data it has. Because it uses simple feature matching, it does not understand lyrics, context, or changing user intent over time.
 
 ---
 
