@@ -116,6 +116,24 @@ I captured the terminal output for each profile and saved it as a screenshot so 
 
 ---
 
+## Loom Walkthrough
+
+Loom video (silent walkthrough): [https://www.loom.com/share/6b36843aa03f45f29b0bdea14923fcd2](https://www.loom.com/share/6b36843aa03f45f29b0bdea14923fcd2)
+
+This walkthrough shows the recommender running end-to-end in the Streamlit frontend with three different input profiles. For each profile, the video shows:
+
+1. Input settings (mode, preference targets, and diversity penalties)
+2. Top recommendation table output
+3. Explanation bullets showing why songs were selected
+
+### Demo Flow Used in Video
+
+1. Profile A: Genre-First High-Energy Pop
+2. Profile B: Mood-First Chill Lofi
+3. Profile C: Energy-Focused Deep Intense Rock
+
+---
+
 ## Limitations and Risks
 
 This recommender is intentionally simple and transparent, which makes it useful for learning, but it still has important limitations.
