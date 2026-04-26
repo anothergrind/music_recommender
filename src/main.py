@@ -4,8 +4,15 @@ Command line runner for the Music Recommender Simulation.
 This file helps you quickly run and test your recommender with
 multiple scoring modes and diversity-aware ranking.
 """
+from pathlib import Path
+import textwrap
+
 from tabulate import tabulate
-from recommender import load_songs, recommend_songs
+
+try:
+    from .recommender import load_songs, recommend_songs
+except ImportError:
+    from recommender import load_songs, recommend_songs
 
 
 PROFILES = [
@@ -83,7 +90,7 @@ def _fallback_table(rows: list[list[str]], headers: list[str]) -> str:
 
 def format_recommendations_table(recommendations: list[tuple[dict, float, str]]) -> str:
     rows: list[list[str]] = []
-    for idx, (song, score, explanation) in enumerate(recommendations, start=1):
+    for idx, (song, score, _explanation) in enumerate(recommendations, start=1):
         rows.append(
             [
                 str(idx),
@@ -91,14 +98,25 @@ def format_recommendations_table(recommendations: list[tuple[dict, float, str]])
                 song["artist"] or "Unknown Artist",
                 song["genre"],
                 f"{score:.2f}",
-                explanation,
             ]
         )
 
-    headers = ["Rank", "Title", "Artist", "Genre", "Score", "Reasons"]
+    headers = ["Rank", "Title", "Artist", "Genre", "Score"]
     if tabulate is not None:
         return tabulate(rows, headers=headers, tablefmt="grid")
     return _fallback_table(rows, headers)
+
+
+def _compact_reasons(explanation: str, max_items: int = 3) -> str:
+    reasons = [part.strip() for part in explanation.split(";") if part.strip()]
+    reasons = [r for r in reasons if not r.startswith("mode:")]
+    if not reasons:
+        return "No strong feature matches"
+
+    selected = reasons[:max_items]
+    if len(reasons) > max_items:
+        selected.append("(+more)")
+    return selected
 
 
 def print_recommendations(profile: dict, songs: list[dict]) -> None:
@@ -117,13 +135,25 @@ def print_recommendations(profile: dict, songs: list[dict]) -> None:
         "Diversity penalties: "
         f"artist={profile['artist_penalty']}, genre={profile['genre_penalty']}"
     )
-    print("Top recommendations table:\n")
+    print("Top recommendations:\n")
     print(format_recommendations_table(recommendations))
+    print("\nWhy these songs were picked:")
+    for idx, (song, _score, explanation) in enumerate(recommendations, start=1):
+        compact_reasons = _compact_reasons(explanation)
+        print(f"{idx}. {song['title']}")
+        for reason in compact_reasons:
+            wrapped = textwrap.wrap(reason, width=95)
+            if wrapped:
+                print(f"   - {wrapped[0]}")
+                for line in wrapped[1:]:
+                    print(f"     {line}")
     print()
 
 
 def main() -> None:
-    songs = load_songs("data/songs.csv")
+    project_root = Path(__file__).resolve().parents[1]
+    songs_path = project_root / "data" / "songs.csv"
+    songs = load_songs(str(songs_path))
     for profile in PROFILES:
         print_recommendations(profile, songs)
 
