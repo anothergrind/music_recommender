@@ -75,11 +75,18 @@ It should not be used to judge people or make claims about personal identity.
 
 ---
 
-## 9. Personal Reflection  
+## 9. Personal Reflection  (Project 3, AI110)
 
 My biggest learning moment was seeing how one weight change made the whole ranking feel different.
 AI tools helped me move faster when creating test profiles, writing comparisons, and spotting possible bias patterns.
+
 I still had to double-check AI suggestions by running `main.py` and reading the top results myself, because some suggestions sounded good but did not match the actual output.
+
 I was surprised that a simple point system can still feel like a real recommender when the top songs line up with the user's vibe.
+
 At the same time, it also showed me how easy it is for one song like "Gym Hero" to appear too often if one feature dominates.
+
 If I extended this project, I would tune the existing diversity rule, collect more songs, and let users tune how much genre, mood, and energy matter.
+
+## 10. Personal Reflection (Project 4, AI110)
+I think this project says a lot about me as an AI Engineer, not to think merely in the ideas of writing code but rather to think in terms of Systems and how I want to direct an LLM to build a system that I have in mind appropriately. This project forced me to think more about Systems, and how I can scale a system into a real world scenario. I learned valuable skills about prompting LLMs and reasoning as an engineer rather than a programmer.

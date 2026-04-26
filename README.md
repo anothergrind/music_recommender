@@ -102,7 +102,7 @@ Use this section to document the experiments you ran. For example:
 
 ### Evaluation Screenshots
 
-I captured the terminal output for each profile and saved it as a screenshot so the ranking behavior is easy to review.
+I captured the terminal output for each profile and saved it as a screenshot so the ranking behavior is easy to review. I also created a streamlit app to visually see what it would look like
 
 #### High-Energy Pop
 

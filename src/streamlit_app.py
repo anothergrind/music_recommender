@@ -67,9 +67,9 @@ PRESET_PROFILES = {
 def _reason_bullets(explanation: str, max_items: int = 3) -> list[str]:
     reasons = [part.strip() for part in explanation.split(";") if part.strip()]
     reasons = [r for r in reasons if not r.startswith("mode:")]
-    if len(reasons) > max_items:
-        return reasons[:max_items] + ["(+more)"]
-    return reasons
+    if not reasons:
+        return ["No strong feature matches"]
+    return reasons[:max_items]
 
 
 def _build_recommendation_table(recommendations: list[tuple[dict, float, str]]) -> pd.DataFrame:
