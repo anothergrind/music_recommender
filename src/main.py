@@ -4,16 +4,8 @@ Command line runner for the Music Recommender Simulation.
 This file helps you quickly run and test your recommender with
 multiple scoring modes and diversity-aware ranking.
 """
-
-try:
-    from tabulate import tabulate
-except ImportError:
-    tabulate = None
-
-try:
-    from .recommender import load_songs, recommend_songs
-except ImportError:
-    from recommender import load_songs, recommend_songs
+from tabulate import tabulate
+from recommender import load_songs, recommend_songs
 
 
 PROFILES = [
@@ -32,6 +24,7 @@ PROFILES = [
             "preferred_mood_tags": ["uplifting", "energetic", "feel-good"],
             "target_instrumentalness": 0.15,
             "target_speechiness": 0.06,
+            "target_liveness": 0.22,
         },
     },
     {
@@ -49,6 +42,7 @@ PROFILES = [
             "preferred_mood_tags": ["chill", "study", "focused", "calming"],
             "target_instrumentalness": 0.88,
             "target_speechiness": 0.05,
+            "target_liveness": 0.10,
         },
     },
     {
@@ -66,6 +60,7 @@ PROFILES = [
             "preferred_mood_tags": ["intense", "powerful", "driving", "aggressive"],
             "target_instrumentalness": 0.2,
             "target_speechiness": 0.12,
+            "target_liveness": 0.30,
         },
     },
 ]

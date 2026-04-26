@@ -31,6 +31,10 @@ Songs with closer energy to the user get more points.
 Then it sorts songs by total score and returns the top 5.
 In my experiment, energy was weighted more and genre was weighted less.
 
+I also added a diversity re-ranking step with artist and genre penalties.
+After each pick, songs from already-selected artists or genres receive a small score penalty.
+This helps prevent repetitive top results and supports fairer exposure across artists and styles.
+
 ---
 
 ## 5. Observed Behavior / Biases  
@@ -39,6 +43,9 @@ I saw an energy-driven filter bubble.
 Songs with similar energy kept showing up, even when genre was different.
 For example, "Gym Hero" appeared in many profiles because it is very high energy and low acoustic.
 This can make results feel repetitive and less personal for some users.
+
+With diversity penalties enabled, repetition drops because one artist or genre is less likely to dominate all top slots.
+This improves fairness by giving more varied songs a chance to appear while still keeping high-relevance matches near the top.
 
 ---
 
@@ -62,7 +69,7 @@ It should not be used to judge people or make claims about personal identity.
 
 ## 8. Ideas for Improvement  
 
-1. Add more rules so the top 5 are not all the same vibe.
+1. Make the diversity penalties adaptive
 2. Add more user inputs
 3. Expand the dataset so more genres and moods are represented.
 
@@ -75,4 +82,4 @@ AI tools helped me move faster when creating test profiles, writing comparisons,
 I still had to double-check AI suggestions by running `main.py` and reading the top results myself, because some suggestions sounded good but did not match the actual output.
 I was surprised that a simple point system can still feel like a real recommender when the top songs line up with the user's vibe.
 At the same time, it also showed me how easy it is for one song like "Gym Hero" to appear too often if one feature dominates.
-If I extended this project, I would add a diversity rule, collect more songs, and let users tune how much genre, mood, and energy matter.
+If I extended this project, I would tune the existing diversity rule, collect more songs, and let users tune how much genre, mood, and energy matter.

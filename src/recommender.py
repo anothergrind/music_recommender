@@ -25,6 +25,7 @@ class Song:
     mood_tags: str = ""
     instrumentalness: float = 0.0
     speechiness: float = 0.0
+    liveness: float = 0.0
 
 
 @dataclass
@@ -127,6 +128,7 @@ def _song_to_dict(song: Song) -> Dict:
         "mood_tags": song.mood_tags,
         "instrumentalness": song.instrumentalness,
         "speechiness": song.speechiness,
+        "liveness": song.liveness,
     }
 
 
@@ -156,6 +158,7 @@ def load_songs(csv_path: str) -> List[Dict]:
                 "mood_tags": (row.get("mood_tags") or "").strip(),
                 "instrumentalness": float((row.get("instrumentalness") or "0.0").strip()),
                 "speechiness": float((row.get("speechiness") or "0.0").strip()),
+                "liveness": float((row.get("liveness") or "0.0").strip()),
             }
             songs.append(song)
 
@@ -215,6 +218,16 @@ def _advanced_feature_scores(user_prefs: Dict, song: Dict) -> Tuple[float, List[
         if speech_points > 0:
             score += speech_points
             reasons.append(f"speechiness closeness (+{speech_points:.2f})")
+
+    target_liveness = user_prefs.get("target_liveness")
+    if target_liveness is not None:
+        live_points = max(
+            0.0,
+            1.0 - abs(float(song.get("liveness", 0.0)) - float(target_liveness)) * 2.0,
+        )
+        if live_points > 0:
+            score += live_points
+            reasons.append(f"liveness closeness (+{live_points:.2f})")
 
     return score, reasons
 
