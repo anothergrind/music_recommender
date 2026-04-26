@@ -111,12 +111,9 @@ def _compact_reasons(explanation: str, max_items: int = 3) -> str:
     reasons = [part.strip() for part in explanation.split(";") if part.strip()]
     reasons = [r for r in reasons if not r.startswith("mode:")]
     if not reasons:
-        return "No strong feature matches"
+        return ["No strong feature matches"]
 
-    selected = reasons[:max_items]
-    if len(reasons) > max_items:
-        selected.append("(+more)")
-    return selected
+    return reasons[:max_items]
 
 
 def print_recommendations(profile: dict, songs: list[dict]) -> None:
