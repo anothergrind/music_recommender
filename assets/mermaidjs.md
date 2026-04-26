@@ -1,12 +1,18 @@
-flowchart LR
-    A[Input: User Preferences] --> B[Set Targets and Weights]
-    B --> C[Loop Through Each Song in CSV]
-    C --> D[Compute Mood Match]
-    C --> E[Compute Genre Match]
-    C --> F[Compute Energy Match]
-    D --> G[Weighted Total Score]
-    E --> G
-    F --> G
-    G --> H[Store Song + Score]
-    H --> I[Sort All Songs by Score Descending]
-    I --> J[Output: Top K Recommendations]
+flowchart TD
+    A["User Profiles<br/>mode + prefs + penalties"] --> B["CLI Runner"]
+    D["songs.csv<br/>song features"] --> B
+    B --> E["load_songs<br/>CSV to list of song records"]
+    E --> F["recommend_songs<br/>user_prefs, songs, k, mode"]
+
+    F --> G["score_song"]
+    G --> H["Base scoring<br/>genre, mood, energy, acoustic"]
+    G --> I["Advanced scoring<br/>decade, popularity, mood tags,<br/>instrumentalness, speechiness, liveness"]
+    H --> J["base score + reasons"]
+    I --> J
+
+    J --> K["Diversity reranking<br/>artist penalty + genre penalty"]
+    K --> L["Top-K songs + explanations"]
+    L --> M["Output formatter<br/>compact table + top-3 bullets"]
+    M --> N["Terminal output"]
+
+    O["Mode weights<br/>genre_first, mood_first, energy_focused"] --> G

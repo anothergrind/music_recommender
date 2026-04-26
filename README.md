@@ -2,14 +2,7 @@
 
 ## Project Summary
 
-In this project you will build and explain a small music recommender system.
-
-Your goal is to:
-
-- Represent songs and a user "taste profile" as data
-- Design a scoring rule that turns that data into recommendations
-- Evaluate what your system gets right and wrong
-- Reflect on how this mirrors real world AI recommenders
+In this project I'm building a small music recommender system
 
 This version builds a transparent content-based music recommender that scores each song against a user profile and prints the top matches with explanations. I also ran the recommender on three normal profiles and two adversarial edge-case profiles to see how the scoring logic behaves when preferences conflict.
 
@@ -79,6 +72,12 @@ pip install -r requirements.txt
 
 ```bash
 python -m src.main
+```
+
+4. Run the Streamlit frontend (visual demo):
+
+```bash
+streamlit run src/streamlit_app.py
 ```
 
 ### Running Tests
