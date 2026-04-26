@@ -10,40 +10,38 @@ This version builds a transparent content-based music recommender that scores ea
 
 ## How The System Works
 
-Real-world recommender systems usually combine many signals (what you clicked, skipped, finished, liked, and searched) to predict what you are most likely to enjoy next, then rank the best candidates into a top list. In this simulation, I am focusing on transparent content-based matching: each song is scored against a user's taste profile, and the highest-scoring songs become the recommendations.
+Real-world recommender systems usually combine many signals (what users click, skip, finish, and replay) to estimate what they may enjoy next, then rank candidate items into a final top list. This project implements a transparent, content-based version of that idea: each song is compared with a user profile, scored with weighted rules, and then reranked with diversity penalties before producing the final recommendations.
 
-This mirrors the same high-level pattern used in large systems (Spotify, YouTube): a retrieval stage narrows the candidate songs, then a ranking stage scores and orders them. In this project, those ideas are simplified into one transparent scoring function so it is easy to see how inputs and weights affect the final ranking.
+The architecture has four practical stages:
 
-Features used by `Song`:
+1. **Input stage:** Load songs from `data/songs.csv` and collect profile preferences from preset profiles (CLI) or sidebar controls (Streamlit).
+2. **Scoring stage:** Compute a numeric score per song using weighted feature matching.
+3. **Reranking stage:** Apply artist and genre penalties to reduce repetition in the top list.
+4. **Presentation stage:** Show a ranked table and short explanation bullets for why each song was selected.
 
-- `id`
-- `title`
-- `artist`
-- `genre`
-- `mood`
-- `energy`
-- `tempo_bpm`
-- `valence`
-- `danceability`
-- `acousticness`
+Features used by `Song` include both core and advanced attributes:
 
-Features used by `UserProfile`:
+- `id`, `title`, `artist`
+- `genre`, `mood`
+- `energy`, `tempo_bpm`, `valence`, `danceability`, `acousticness`
+- `popularity`, `release_year`, `mood_tags`, `instrumentalness`, `speechiness`, `liveness`
 
-- `favorite_genre`
-- `favorite_mood`
-- `target_energy`
-- `likes_acoustic`
+Features used by `UserProfile` include mode + preference targets:
+
+- `genre`, `mood`, `energy`, `likes_acoustic`
+- `preferred_decade`, `target_popularity`, `preferred_mood_tags`
+- `target_instrumentalness`, `target_speechiness`, `target_liveness`
+- ranking `mode` (`genre_first`, `mood_first`, `energy_focused`)
+- `artist_penalty` and `genre_penalty` for diversity-aware reranking
 
 ### Algorithm Recipe
 
-1. Read the user's preferences and turn them into target values for genre, mood, and energy.
-2. Loop through every song in `data/songs.csv`.
-3. Compare each song to the user profile and give partial scores for each feature match.
-4. Combine the partial scores with weights to get one final score per song.
-5. Sort the songs from highest score to lowest score.
-6. Return the top `K` songs as the final recommendation list.
-
-The scoring logic treats mood and energy as strong signals, genre as another important signal, and the remaining audio features as refinements that help break ties or improve the ranking.
+1. Read user preferences and select a ranking mode (`genre_first`, `mood_first`, or `energy_focused`).
+2. Loop through songs and compute base score components for genre, mood, energy closeness, and acoustic preference.
+3. Add advanced feature points from decade, popularity, mood-tag overlap, instrumentalness, speechiness, and liveness closeness.
+4. Build a candidate pool with `base_score + reasons` for every song.
+5. Select top `K` songs iteratively using adjusted score = `base_score - diversity_penalty`, where the penalty increases when the same artist or genre repeats.
+6. Return the ranked songs and explanation strings, then render them as a compact table plus top reason bullets.
 
 ### Expected Biases and Limitations
 
@@ -92,14 +90,6 @@ You can add more tests in `tests/test_recommender.py`.
 
 ---
 
-## Experiments You Tried
-
-Use this section to document the experiments you ran. For example:
-
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
-
 ### Evaluation Screenshots
 
 I captured the terminal output for each profile and saved it as a screenshot so the ranking behavior is easy to review. I also created a streamlit app to visually see what it would look like
@@ -128,25 +118,30 @@ I captured the terminal output for each profile and saved it as a screenshot so 
 
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
+This recommender is intentionally simple and transparent, which makes it useful for learning, but it still has important limitations.
 
-Examples:
+- Small and synthetic dataset: The catalog is only 18 songs, so recommendations are constrained by limited genre coverage and may not generalize to real listening behavior.
 
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
+- Content-only matching: The system uses song attributes and fixed profile preferences, but does not learn from real user interaction history such as skips, repeats, or session context. (something that Spotify/Apple Music/Youtube Music has)
 
-You will go deeper on this in your model card.
+- Feature bias risk: Strong weights on energy, mood, or genre can dominate rankings and create repetitive results if not carefully tuned.
+
+- Partial diversity control: Artist and genre penalties reduce repetition, but they do not guarantee full fairness across all underrepresented styles.
+
+- No semantic understanding: The model does not interpret lyrics, culture, language, or meaning, so two songs with similar numeric features may still feel very different to listeners.
+
+Mitigation ideas used in this project include running multiple profile tests, exposing recommendation reasons for transparency, and applying diversity penalties. Additional mitigation would require a larger dataset, richer user feedback signals, and more systematic fairness evaluation.
 
 ---
 
 ## Reflection
 
-Read and complete `model_card.md`:
+Building this project helped me understand that recommenders are not just about writing a scoring formula; they are about making clear design choices and then validating the outcomes against real user scenarios. 
 
-[**Model Card**](model_card.md)
+I learned how small weight changes can significantly shift rankings, how feature selection can introduce unintended bias, and why transparency matters when presenting AI outputs. 
 
-Write 1 to 2 paragraphs here about what you learned:
+By testing multiple profiles, adding explanation bullets, and introducing diversity penalties, I saw how an AI engineer has to balance different outputs at the same time. 
 
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
+This project reflects my approach to AI engineering: build practical systems end-to-end, explain how they work, and iterate responsibly based on observed behavior.
+
+See the full model card here: [**Model Card**](model_card.md)
